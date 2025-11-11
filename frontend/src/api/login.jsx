@@ -35,6 +35,7 @@ function Login() {
         console.log('Login response:', response.data);
         if (response?.data?.token) {
           localStorage.setItem('token', response.data.token);
+          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
         }
         setSuccess(true);
         gotoDashboard('/dashboard');

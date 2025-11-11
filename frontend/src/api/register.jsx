@@ -40,6 +40,7 @@ function Register() {
       .then((response) => {
         if (response?.data?.token) {
           localStorage.setItem('token', response.data.token);
+          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
         }
         setSuccess(true);
         gotoDashboard('/dashboard');

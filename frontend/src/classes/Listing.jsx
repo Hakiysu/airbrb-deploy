@@ -14,7 +14,7 @@ class Listing {
     };
   }
 
-  getListings() {
+  getAllListings() {
     return axios.get('/api/listings')
       .then(response => response.data)
       .catch(error => {
@@ -68,6 +68,50 @@ class Listing {
     };
   }
 
+  updateListing(listingId, updatedData) {
+    return axios.put(`/listings/${listingId}`, updatedData)
+      .then(response => response.data)
+      .catch(error => {
+        console.error('Error updating listing:', error);
+        throw error;
+      });
+  }
+
+  deleteListing(listingId) {
+    return axios.delete(`/listings/${listingId}`)
+      .then(response => response.data)
+      .catch(error => {
+        console.error('Error deleting listing:', error);
+        throw error;
+      });
+  }
+
+  publishListing(listingId) {
+    return axios.put(`/listings/publish/${listingId}`)
+      .then(response => response.data)
+      .catch(error => {
+        console.error('Error publishing listing:', error);
+        throw error;
+      });
+  }
+
+  unpublishListing(listingId) {
+    return axios.put(`/listings/unpublish/${listingId}`)
+      .then(response => response.data)
+      .catch(error => {
+        console.error('Error unpublishing listing:', error);
+        throw error;
+      });
+  }
+
+  reviewListing(listingId, bookingId,reviewData) {
+    return axios.put(`/listings/${listingId}/review/${bookingId}`, reviewData)
+      .then(response => response.data)
+      .catch(error => {
+        console.error('Error reviewing listing:', error);
+        throw error;
+      });
+  }
 }
 
 export default Listing;

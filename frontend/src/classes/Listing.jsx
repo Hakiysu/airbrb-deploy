@@ -14,17 +14,6 @@ class Listing {
     };
   }
 
-  createListing() {
-    // seems not right emmmmmm
-    return {
-      title: this.title,
-      address: this.address,
-      price: this.price,
-      thumbnail: this.thumbnail,
-      metadata: this.metadata,
-    };
-  }
-
   getListings() {
     return axios.get('/api/listings')
       .then(response => response.data)
@@ -45,16 +34,38 @@ class Listing {
   }
 
   postListing(ListingData) {
-    const token= localStorage.getItem('token');
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    //check if token exists in local storage
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.log ('No token found!');
+    }
+    // post to backend, with token in headers
     return axios.post('/listings/new', ListingData)
       .then(response => response.data)
-      .then(console.log('Listing successfully pushed to backend:', ListingData))
+      .then(console.log('Listing posted successfully:', ListingData))
       .catch(error => {
-        console.error('Error pushing listing to backend:', error);
+        console.error('Error posting listing:', error);
         throw error;
       });
+  }
 
+  // data reformatter
+  formatListingData(rawData) {
+    // all rawData are string, format them
+    return {
+      title: rawData.title,
+      address: {
+        description: rawData.address,
+      },
+      price: parseFloat(rawData.price),
+      thumbnail: rawData.thumbnail,
+      metadata: {
+        propertyType: rawData.metadata.propertyType,
+        numBathrooms: parseInt(rawData.metadata.numBathrooms),
+        bedrooms: parseInt(rawData.metadata.bedrooms),
+        amenities: rawData.metadata.amenities.split(',').map(item => item.trim()),
+      },
+    };
   }
 
 }

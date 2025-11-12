@@ -21,7 +21,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  let gotoDashboard = useNavigate();
+  let gotoPage = useNavigate();
 
   // handle form submission
   const handleSubmit = async (e) => {
@@ -38,7 +38,7 @@ function Login() {
           axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
         }
         setSuccess(true);
-        gotoDashboard('/dashboard');
+        gotoPage('/');
       })
       .catch((err) => {
         console.error('Login failed:', err);

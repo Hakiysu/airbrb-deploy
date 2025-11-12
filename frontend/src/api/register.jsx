@@ -22,7 +22,7 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  let gotoDashboard = useNavigate();
+  let gotoPage = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,7 +43,7 @@ function Register() {
           axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
         }
         setSuccess(true);
-        gotoDashboard('/dashboard');
+        gotoPage('/');
       })
       .catch((err) => {
         const errorMessage = err?.response?.data?.error ?? err?.message ?? 'Registration failed';

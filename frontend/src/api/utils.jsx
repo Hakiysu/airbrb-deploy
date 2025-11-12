@@ -1,19 +1,27 @@
-// frontend/src/api/utils.jsx
-
 import {useNavigate} from "react-router";
 
-let gotoPage = useNavigate();
+export default function useAuthUtils() {
+  const navigate = useNavigate();
 
+  const init = () => {
+    const token = localStorage.getItem('token');
+    if (token) navigate('/');
+    return !!token;
+  };
 
-// init, do user status check, if logged in, redirect to dashboard
-export const init = () => {
-  const token = localStorage.getItem('token');
-  gotoPage('/dashboard');
-  return !!token;
-}
+  const logoutUser = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
 
-// logout user
-export function logoutUser() {
-  localStorage.removeItem('token');
-  gotoPage('/login');
+  const isUserLoggedIn = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return false;
+    }
+    return true;
+  };
+
+  return { init, logoutUser, isUserLoggedIn };
 }

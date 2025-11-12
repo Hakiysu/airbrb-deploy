@@ -15,8 +15,19 @@ class Listing {
   }
 
   getAllListings() {
-    return axios.get('/api/listings')
+    if (!localStorage.getItem('token')) {
+      console.log ('No token found!');
+    }
+    return axios.get('/listings')
       .then(response => response.data)
+      .then(response => {
+        console.log('Fetched listings:', response);
+        //if empty array, return empty array
+        if (response.length === 0) {
+          return [];
+        }
+        return response;
+      })
       .catch(error => {
         console.error('Error fetching listings:', error);
         throw error;
@@ -24,7 +35,7 @@ class Listing {
   }
 
   getListingById(listingId) {
-    return axios.get(`/api/listings/${listingId}`)
+    return axios.get(`/listings/${listingId}`)
       .then(response => response.data)
       .catch(error => {
         console.error('Error fetching listing by ID:', error);

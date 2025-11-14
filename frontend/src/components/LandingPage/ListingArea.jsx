@@ -1,32 +1,22 @@
 import ListingCard from "./ListingCard.jsx";
 import { useEffect, useState } from "react";
 import { Grid } from "@mui/material";
+import Listing from "../../classes/Listing.jsx";
 
 export default function ListingArea() {
   const [listings, setListings] = useState([]);
-
   useEffect(() => {
-    setListings([
-      {
-        id: 56513315,
-        title: "Oceanside Villa",
-        owner: "TestOwner1",
-        address: {},
-        thumbnail:"",// base64 is okay to see, but not good to write here(too long)
-        price: 350,
-        reviews: [{}],
-      },
-      {
-        id: 56513316,
-        title: "Mountain Cabin",
-        owner: "TestOwner2",
-        address: {},
-        thumbnail:"",
-        price: 200,
-        reviews: [{}, {}],
-      }
-    ]);
+    const listingInstance = new Listing();
+    listingInstance.getAllListings()
+      .then((data) => {
+        setListings(data.listings || []); // 取 listings 数组
+      })
+      .catch((error) => {
+        console.error("Error fetching listings:", error);
+        setListings([]); // 避免 undefined
+      });
   }, []);
+
 
   return (
     <Grid container spacing={2} justifyContent="flex-start">

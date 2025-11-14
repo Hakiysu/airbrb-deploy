@@ -50,6 +50,7 @@ class Listing {
     if (!token) {
       console.log ('No token found!');
     }
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     // post to backend, with token in headers
     return axios.post('/listings/new', ListingData)
       .then(response => response.data)

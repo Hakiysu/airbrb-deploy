@@ -1,4 +1,4 @@
-import ListingArea from "../components/ListingArea.jsx";
+import ListingArea from "../components/LandingPage/ListingArea.jsx";
 import {Box, Typography} from "@mui/material";
 
 export default function LandingPage() {

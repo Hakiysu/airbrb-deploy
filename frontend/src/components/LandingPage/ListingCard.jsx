@@ -1,12 +1,16 @@
 import { Card, CardMedia, CardContent, Typography, Rating, Box } from '@mui/material';
+import {useNavigate} from "react-router";
 
 export default function ListingCard({ listing }) {
   const thumbnail = listing.thumbnail || '/default.jpg';
   const title = listing.title || 'Untitled Listing';
   const reviewCount = Array.isArray(listing.reviews) ? listing.reviews.length : 0;
-
+  const navitage= useNavigate();
   return (
-    <Card sx={{ borderRadius: 2, overflow: 'hidden', cursor: 'pointer' }}>
+    <Card
+      sx={{ borderRadius: 2, overflow: 'hidden', cursor: 'pointer' }}
+      onClick={() => navitage(`/listings/${listing.id}`)}
+    >
       <CardMedia
         component="img"
         height="160"

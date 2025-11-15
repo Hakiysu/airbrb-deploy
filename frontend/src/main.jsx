@@ -15,6 +15,7 @@ import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import ListingEditor from "./api/ListingEditor.jsx";
 import Landing from "./pages/Landing.jsx";
+import ListingManager from "./pages/LIstingManager.jsx";
 
 
 createRoot(document.getElementById('root')).render(
@@ -26,6 +27,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/listingEditor" element={<ListingEditor />} />
+        <Route path="/ListingManager" element={<ListingManager />} />
       </Routes>
       <Footer />
     </BrowserRouter>

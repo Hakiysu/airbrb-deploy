@@ -21,20 +21,20 @@ export default function ListingEditor() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name in formData.metadata) {
-      setFormData((prevData) => ({
-        ...prevData,
+      setFormData({
+        ...formData,
         metadata: {
-          ...prevData.metadata,
+          ...formData.metadata,
           [name]: value,
         },
-      }));
+      });
     } else {
-      setFormData((prevData) => ({
-        ...prevData,
+      setFormData({
+        ...formData,
         [name]: value,
-      }));
+      });
     }
-  };
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -49,8 +49,6 @@ export default function ListingEditor() {
       formData.metadata.amenities
     );
     console.log('Submitting listing:', newListing);
-    newListing.formatListingData(newListing);
-    console.log(newListing);
     newListing.postListing(formData)
       .then((response) => {
         console.log('Listing submitted successfully:', response);

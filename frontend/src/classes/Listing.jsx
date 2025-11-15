@@ -51,10 +51,12 @@ class Listing {
       console.log ('No token found!');
     }
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    // format data
+    ListingData = this.formatListingData(ListingData);
+    console.log('Formatted Listing Data:', ListingData);
     // post to backend, with token in headers
     return axios.post('/listings/new', ListingData)
       .then(response => response.data)
-      .then(console.log('Listing posted successfully:', ListingData))
       .catch(error => {
         console.error('Error posting listing:', error);
         throw error;

@@ -1,6 +1,7 @@
-// frontend/src/assets/auth/register.jsx
+// frontend/src/pages/Auth/Register.jsx
 import { useState } from 'react';
 import axios from 'axios';
+
 // Material UI components
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -13,6 +14,7 @@ import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import {useNavigate} from "react-router";
+import {handleAuthSuccess} from "../../api/utils.jsx";
 
 function Register() {
   const [email, setEmail] = useState('');
@@ -39,12 +41,10 @@ function Register() {
     axios.post('/user/auth/register', { email, password, name })
       .then((response) => {
         if (response?.data?.token) {
-          localStorage.setItem('token', response.data.token);
-          localStorage.setItem('email', email);
-          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+          handleAuthSuccess(response.data.token, email);
+          setSuccess(true);
+          gotoPage('/');
         }
-        setSuccess(true);
-        gotoPage('/');
       })
       .catch((err) => {
         const errorMessage = err?.response?.data?.error ?? err?.message ?? 'Registration failed';
@@ -122,7 +122,7 @@ function Register() {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="/login" variant="body2">
+              <Link href="/frontend/src/pages/Auth/Login" variant="body2">
                 Already have an account? Log in
               </Link>
             </Grid>

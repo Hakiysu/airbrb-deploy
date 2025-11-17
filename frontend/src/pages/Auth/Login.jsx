@@ -1,4 +1,4 @@
-// login.jsx
+// frontend/src/pages/Auth/Login.jsx
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -12,7 +12,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
+
 import {useNavigate} from "react-router";
+import {handleAuthSuccess} from "../../api/utils.jsx";
 
 function Login() {
   // state for form fields
@@ -34,12 +36,10 @@ function Login() {
       .then((response) => {
         console.log('Login response:', response.data);
         if (response?.data?.token) {
-          localStorage.setItem('token', response.data.token);
-          localStorage.setItem('email', email);
-          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+          handleAuthSuccess(response.data.token, email);
+          setSuccess(true);
+          gotoPage('/');
         }
-        setSuccess(true);
-        gotoPage('/');
       })
       .catch((err) => {
         console.error('Login failed:', err);
@@ -95,8 +95,8 @@ function Login() {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="/register" variant="body2">
-                Don't have an account? Sign Up
+              <Link href="/frontend/src/pages/Auth/Register" variant="body2">
+                Want to own an account? Register
               </Link>
             </Grid>
           </Grid>

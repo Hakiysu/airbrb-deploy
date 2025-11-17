@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography, Paper } from '@mui/material';
-import Listing from '../classes/Listing';
+import Listing from '../classes/Listing.jsx';
 import Address from "../classes/Address.jsx";
 import AddressField from "../components/AddressField.jsx";
+import { useParams, useNavigate } from 'react-router';
 
 export default function ListingEditor() {
+  const { listingId } = useParams();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',//string
-    address: {Address},//string
+    address: new Address(),//Address
     price: '',//number
     thumbnail: '',//string
     metadata: {
@@ -17,6 +20,16 @@ export default function ListingEditor() {
       amenities: '',
     },
   });
+
+  useEffect(() => {
+    if (listingId) {
+      // detect listing id, know edit now, get specific data
+      const listingInstance = new Listing();
+      listingInstance.getListingById(listingId).then(data => {
+        setFormData(data); // load data
+      });
+    }
+  }, [listingId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,32 +51,20 @@ export default function ListingEditor() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newListing = new Listing(
-      formData.title,
-      formData.address,
-      formData.price,
-      formData.thumbnail,
-      formData.metadata.propertyType,
-      formData.metadata.numBathrooms,
-      formData.metadata.bedrooms,
-      formData.metadata.amenities
-    );
-    console.log('Submitting listing:', newListing);
-    newListing.postListing(formData)
-      .then((response) => {
-        console.log('Listing submitted successfully:', response);
-        // Optionally reset form or show success message
-      })
-      .catch((error) => {
-        console.error('Error submitting listing:', error);
-        // Optionally show error message
-      });
+    const listingInstance = new Listing();
+    if (listingId) {
+      // submit as UPDATE/EDIT
+      listingInstance.updateListing(listingId, formData).then(() => navigate('/listing-manager'));
+    } else {
+      // submit as CREATE
+      listingInstance.postListing(formData).then(() => navigate('/listing-manager'));
+    }
   }
 
   return (
     <Paper sx={{ p: 4, maxWidth: 600, margin: '40px auto' }}>
       <Typography variant="h5" gutterBottom>
-        Listing Editor
+        {listingId ? "Edit Listing" : "Create Listing"}
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <TextField label="Listing Title" name="title" value={formData.title} onChange={handleChange} required />
@@ -84,9 +85,7 @@ export default function ListingEditor() {
           value={formData.metadata.amenities}
           onChange={handleChange}
         />
-        <Button variant="contained" color="primary" type="submit">
-          Submit
-        </Button>
+        <Button type="submit">{listingId ? "Save Changes" : "Create Listing"}</Button>
       </Box>
     </Paper>
   );

@@ -34,6 +34,40 @@ class Listing {
       });
   }
 
+  async getListingsWithMetadata() {
+    if (!localStorage.getItem('token')) {
+      console.log('No token found!');
+    }
+
+    try {
+      // get all listings
+      const response = await axios.get('/listings');
+      const listings = response.data.listings || [];
+      console.log('Fetched listings111:', listings);
+      // get metadata for each listing, save into listing json
+      const listingsWithMeta = await Promise.all(
+        listings.map(async (item) => {
+          const metaRes = await axios.get(`/listings/${item.id}`);
+          console.log(`Fetched metadata for listing ${item.id}:`, metaRes.data.listing.metadata);
+          return {
+            ...item,
+            metadata: metaRes.data.listing.metadata,
+          };
+        })
+      );
+
+      console.log('Listings with metadata:', listingsWithMeta);
+      return listingsWithMeta;
+
+    } catch (error) {
+      console.error('Error fetching listings with metadata:', error);
+      throw error;
+    }
+  }
+
+
+
+
   getListingById(listingId) {
     return axios.get(`/listings/${listingId}`)
       .then(response => response.data)
@@ -41,7 +75,6 @@ class Listing {
         console.error('Error fetching listing by ID:', error);
         throw error;
       });
-
   }
 
   postListing(ListingData) {
@@ -125,6 +158,11 @@ class Listing {
         console.error('Error reviewing listing:', error);
         throw error;
       });
+  }
+
+  static getAllListings() {
+    const listingInstance = new Listing();
+    return listingInstance.getAllListings();
   }
 }
 

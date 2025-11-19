@@ -1,168 +1,151 @@
 import axios from "axios";
 
 class Listing {
-  constructor(title, address, price, thumbnail, propertyType, numBathrooms, bedrooms, amenities) {
-    this.title = title;
-    this.address = address;
-    this.price= price;
+  constructor({
+    title,
+    owner,
+    address,
+    price,
+    thumbnail,
+    metadata,
+    availability,
+    reviews,
+    published,
+    postedOn
+  } = {}) {
+    this.title = title || '';
+    this.owner = owner || '';
+    this.address = address || {};
+    this.price = price || 0;
     this.thumbnail = thumbnail || 'default-image.jpg';
-    this.metadata = {
-      propertyType: propertyType,
-      numBathrooms: numBathrooms,
-      bedrooms: bedrooms,
-      amenities: amenities,
+    this.metadata = metadata || {
+      propertyType: '',
+      bathrooms: 0,
+      bedrooms: [],
+      amenities: [],
+      images: []
     };
-  }
-
-  getAllListings() {
-    if (!localStorage.getItem('token')) {
-      console.log ('No token found!');
-    }
-    return axios.get('/listings')
-      .then(response => response.data)
-      .then(response => {
-        console.log('Fetched listings:', response);
-        //if empty array, return empty array
-        if (response.length === 0) {
-          return [];
-        }
-        return response;
-      })
-      .catch(error => {
-        console.error('Error fetching listings:', error);
-        throw error;
-      });
-  }
-
-  async getListingsWithMetadata() {
-    if (!localStorage.getItem('token')) {
-      console.log('No token found!');
-    }
-
-    try {
-      // get all listings
-      const response = await axios.get('/listings');
-      const listings = response.data.listings || [];
-      console.log('Fetched listings111:', listings);
-      // get metadata for each listing, save into listing json
-      const listingsWithMeta = await Promise.all(
-        listings.map(async (item) => {
-          const metaRes = await axios.get(`/listings/${item.id}`);
-          console.log(`Fetched metadata for listing ${item.id}:`, metaRes.data.listing.metadata);
-          return {
-            ...item,
-            metadata: metaRes.data.listing.metadata,
-          };
-        })
-      );
-
-      console.log('Listings with metadata:', listingsWithMeta);
-      return listingsWithMeta;
-
-    } catch (error) {
-      console.error('Error fetching listings with metadata:', error);
-      throw error;
-    }
-  }
-
-
-
-
-  getListingById(listingId) {
-    return axios.get(`/listings/${listingId}`)
-      .then(response => response.data)
-      .catch(error => {
-        console.error('Error fetching listing by ID:', error);
-        throw error;
-      });
-  }
-
-  postListing(ListingData) {
-    //check if token exists in local storage
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.log ('No token found!');
-    }
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    // format data
-    ListingData = this.formatListingData(ListingData);
-    console.log('Formatted Listing Data:', ListingData);
-    // post to backend, with token in headers
-    return axios.post('/listings/new', ListingData)
-      .then(response => response.data)
-      .catch(error => {
-        console.error('Error posting listing:', error);
-        throw error;
-      });
+    this.availability = availability || [];
+    this.reviews = reviews || [];
+    this.published = published || false;
+    this.postedOn = postedOn || new Date().toISOString();
   }
 
   // data reformatter
   formatListingData(rawData) {
-    // all rawData are string, format them
     return {
       title: rawData.title,
-      address: {
-        description: rawData.address,
-      },
+      address: rawData.address,  // JSON
       price: parseFloat(rawData.price),
       thumbnail: rawData.thumbnail,
       metadata: {
         propertyType: rawData.metadata.propertyType,
-        numBathrooms: parseInt(rawData.metadata.numBathrooms),
-        bedrooms: parseInt(rawData.metadata.bedrooms),
-        amenities: rawData.metadata.amenities.split(',').map(item => item.trim()),
+        bathrooms: parseInt(rawData.metadata.bathrooms) || 0,
+        bedrooms: (rawData.metadata.bedrooms || []).map(b => ({
+          name: b.name,
+          beds: (b.beds || []).map(bb => ({
+            type: bb.type,
+            count: parseInt(bb.count) || 1
+          }))
+        })),
+        amenities: (rawData.metadata.amenities || '')
+          .split?.(',')
+          .map(item => item.trim()) || [],
+        images: rawData.metadata.images || [] // array of image base64 strings
       },
+      availability: (rawData.availability || []).map(r => ({
+        start: r.start,
+        end: r.end
+      }))
     };
   }
 
-  updateListing(listingId, updatedData) {
-    return axios.put(`/listings/${listingId}`, updatedData)
-      .then(response => response.data)
-      .catch(error => {
-        console.error('Error updating listing:', error);
-        throw error;
-      });
+  getAllListings() {
+    return axios.get('/listings')
+      .then(res => res.data.listings || [])
+      .catch(err => { console.error('Error fetching all listings:', err); throw err; });
+  }
+
+  getListingsWithMetadata() {
+    return axios.get('/listings')
+      .then(response => {
+        const listings = response.data.listings || [];
+        return Promise.all(
+          listings.map(item =>
+            axios.get(`/listings/${item.id}`)
+              .then(metaRes => {
+                const listing = metaRes.data.listing;
+                if (!Array.isArray(listing.metadata.bedrooms)) {
+                  listing.metadata.bedrooms = [];
+                }
+                listing.metadata.bedrooms = listing.metadata.bedrooms.map(bedroom => {
+                  if (!Array.isArray(bedroom.beds)) bedroom.beds = [];
+                  bedroom.beds = bedroom.beds.map(bed => ({
+                    type: bed.type || '',
+                    count: bed.count || 1
+                  }));
+                  return bedroom;
+                });
+                if (!Array.isArray(listing.metadata.amenities)) {
+                  listing.metadata.amenities = [];
+                }
+                listing.availability = Array.isArray(listing.availability) ? listing.availability : [];
+                listing.id = item.id;
+                return listing;
+              })
+          )
+        );
+      })
+      .catch(err => { console.error('Error fetching listings with metadata:', err); throw err; });
+  }
+
+  getListingById(listingId) {
+    return axios.get(`/listings/${listingId}`)
+      .then(res => res.data.listing)
+      .catch(err => { console.error('Error fetching listing by ID:', err); throw err; });
+  }
+
+  postListing(listingData) {
+    const formatted = this.formatListingData(listingData);
+    console.log('Posting listing with data:', formatted,"token:", axios.defaults.headers.common['Authorization']);
+    return axios.post('/listings/new', formatted)
+      .then(res => res.data)
+      .catch(err => { console.error('Error posting listing:', err); throw err; });
+  }
+
+  updateListing(listingId, listingData) {
+    const formatted = this.formatListingData(listingData);
+    console.log('Updating listing with data:', formatted);
+    return axios.put(`/listings/${listingId}`, formatted)
+      .then(res => res.data)
+      .catch(err => { console.error('Error updating listing:', err); throw err; });
   }
 
   deleteListing(listingId) {
     return axios.delete(`/listings/${listingId}`)
-      .then(response => response.data)
-      .catch(error => {
-        console.error('Error deleting listing:', error);
-        throw error;
-      });
+      .then(res => res.data)
+      .catch(err => { console.error('Error deleting listing:', err); throw err; });
   }
 
-  publishListing(listingId) {
-    return axios.put(`/listings/publish/${listingId}`)
-      .then(response => response.data)
-      .catch(error => {
-        console.error('Error publishing listing:', error);
-        throw error;
+  publishListing(listingId, availability) {
+    return axios.put(`/listings/publish/${listingId}`, availability )
+      .then(res => res.data)
+      .catch(err => {
+        console.error('Error publishing listing:', err);
+        throw err;
       });
   }
 
   unpublishListing(listingId) {
     return axios.put(`/listings/unpublish/${listingId}`)
-      .then(response => response.data)
-      .catch(error => {
-        console.error('Error unpublishing listing:', error);
-        throw error;
-      });
+      .then(res => res.data)
+      .catch(err => { console.error('Error unpublishing listing:', err); throw err; });
   }
 
-  reviewListing(listingId, bookingId,reviewData) {
+  reviewListing(listingId, bookingId, reviewData) {
     return axios.put(`/listings/${listingId}/review/${bookingId}`, reviewData)
-      .then(response => response.data)
-      .catch(error => {
-        console.error('Error reviewing listing:', error);
-        throw error;
-      });
-  }
-
-  static getAllListings() {
-    const listingInstance = new Listing();
-    return listingInstance.getAllListings();
+      .then(res => res.data)
+      .catch(err => { console.error('Error reviewing listing:', err); throw err; });
   }
 }
 

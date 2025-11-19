@@ -1,11 +1,15 @@
 // frontend/src/components/Header.jsx
+// 2.1.3, 2.1.4 for manage own listings, show all listings, logout button
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router';
+import { useContext } from 'react';
+import { AuthContext } from '../api/AuthContext.jsx';
 
 export default function Header() {
+  const { token, logout } = useContext(AuthContext);
   return (
     <AppBar position="static">
       <Toolbar>
@@ -14,11 +18,11 @@ export default function Header() {
         </Typography>
         <Button color="inherit" component={Link} to="/">Home</Button>
         <Button color="inherit" component={Link} to="/listings">Listings</Button>
-        {localStorage.getItem('token') ? (
+        {token ? (
           <>
             <Button color="inherit" component={Link} to="/listing-manager">Manage Listings</Button>
             <Button color="inherit" component={Link} to="/booking-manager">Manage Bookings</Button>
-            <Button color="inherit" component={Link} to="/logout">Logout</Button>
+            <Button color="inherit" onClick={logout}>Logout</Button>
           </>
         ) : (
           <>

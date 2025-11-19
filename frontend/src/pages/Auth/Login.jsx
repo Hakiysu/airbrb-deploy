@@ -18,7 +18,6 @@ import {useNavigate} from "react-router";
 import { useContext } from 'react';
 import { AuthContext } from '../../api/AuthContext.jsx';
 
-
 function Login() {
   // state for form fields
   const [email, setEmail] = useState('');

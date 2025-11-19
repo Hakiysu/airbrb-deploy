@@ -1,3 +1,5 @@
+// frontend/src/pages/ListingManager.jsx
+// 2.2.1, 2.2.2 Manage own listings page
 import { useState, useEffect } from 'react';
 import { Container, Typography, Paper, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box, Avatar } from '@mui/material';
 import Listing from "../classes/Listing.jsx";

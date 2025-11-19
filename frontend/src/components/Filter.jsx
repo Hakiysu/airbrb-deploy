@@ -22,8 +22,8 @@ export default function Filter({ allListings, onFilter }) {
     console.log('Applying filters:', { searchText, bedroomRange, priceRange });
     console.log('Before filtering data:', filteredListings);
 
-    // search text matched
-    if (searchText.trim()) {
+    // search by text
+    if (searchText && searchText.length > 0) {
       const keyword = searchText.toLowerCase();
       filteredListings = filteredListings.filter(
         (listing) =>
@@ -34,6 +34,8 @@ export default function Filter({ allListings, onFilter }) {
           listing.address?.country?.toLowerCase().includes(keyword)
       );
     }
+    console.log(`After text search (${searchText}):`, filteredListings);
+
 
     // sort by bedroom num
     if (bedroomRange) {
@@ -44,6 +46,8 @@ export default function Filter({ allListings, onFilter }) {
         return bedrooms >= minB && bedrooms <= maxB;
       });
     }
+    console.log(`After bedroom filter (${bedroomRange}):`, filteredListings);
+
     // sort by price
     if (priceRange) {
       const [minP, maxP] = priceRange;
@@ -53,6 +57,7 @@ export default function Filter({ allListings, onFilter }) {
         return price >= minP && price <= maxP;
       });
     }
+    console.log(`After price filter (${priceRange}):`, filteredListings);
 
     console.log('Filtered listings count:', filteredListings.length);
     console.log('After filtering data:', filteredListings);

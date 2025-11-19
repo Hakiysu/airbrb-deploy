@@ -16,10 +16,12 @@ export default function LandingPage() {
       setAllListings(listings);
       setDisplayListings(listings);
     });
-  }, []);
 
-  console.log('All listings in LandingPage:', allListings);
-  console.log('Display listings in LandingPage:', displayListings);
+    // sort the listings
+
+    console.log('All listings in LandingPage:', allListings);
+    console.log('Display listings in LandingPage:', displayListings);
+  }, []);
 
   const handleFilterResult = (filtered) => {
     setDisplayListings(filtered);

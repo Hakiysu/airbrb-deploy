@@ -1,8 +1,10 @@
 import { Navigate } from "react-router";
 import { Alert, Box } from "@mui/material";
+import { useContext } from "react";
+import { AuthContext } from "./AuthContext.jsx";
 
 export default function AuthChecker({ children }) {
-  const token = localStorage.getItem("token");
+  const { token } = useContext(AuthContext);
   if (!token) {
     return (
       <Box sx={{ p: 2 }}>

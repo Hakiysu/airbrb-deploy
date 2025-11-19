@@ -20,7 +20,7 @@ export default function ListingCard({ listing }) {
         transition: '0.2s',
         '&:hover': { boxShadow: 6 }
       }}
-      onClick={() => navigate(`/listings/${listing.id}`)}
+      onClick={() => navigate(`/listing-editor/${listing.id}`)}
     >
       <CardMedia
         component="img"
@@ -28,7 +28,6 @@ export default function ListingCard({ listing }) {
         image={thumbnail}
         alt={title}
       />
-
       <CardContent sx={{ pb: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 600 }}>
           {title}
@@ -41,7 +40,7 @@ export default function ListingCard({ listing }) {
         <Box display="flex" alignItems="center" gap={1} mt={1}>
           <Rating precision={0.5} readOnly value={rating} />
           <Typography variant="body2" color="text.secondary">
-            REVIEW NUMBER: {reviewCount} reviews
+            ({reviewCount} reviews)
           </Typography>
         </Box>
         {price && (

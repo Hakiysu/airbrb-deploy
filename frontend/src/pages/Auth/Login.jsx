@@ -1,4 +1,5 @@
 // frontend/src/pages/Auth/Login.jsx
+// 2.1.1
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -14,7 +15,9 @@ import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import {useNavigate} from "react-router";
-import {handleAuthSuccess} from "../../api/utils.jsx";
+import { useContext } from 'react';
+import { AuthContext } from '../../api/AuthContext.jsx';
+
 
 function Login() {
   // state for form fields
@@ -24,6 +27,7 @@ function Login() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   let gotoPage = useNavigate();
+  const { login } = useContext(AuthContext);
 
   // handle form submission
   const handleSubmit = async (e) => {
@@ -36,7 +40,9 @@ function Login() {
       .then((response) => {
         console.log('Login response:', response.data);
         if (response?.data?.token) {
-          handleAuthSuccess(response.data.token, email);
+          console.log('Login successful, token received');
+          //use context
+          login(response.data.token, email);
           setSuccess(true);
           gotoPage('/');
         }
@@ -95,8 +101,8 @@ function Login() {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="/frontend/src/pages/Auth/Register" variant="body2">
-                Want to own an account? Register
+              <Link href="/register" variant="body2">
+                No account? Register here
               </Link>
             </Grid>
           </Grid>

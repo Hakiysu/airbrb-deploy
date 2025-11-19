@@ -1,4 +1,5 @@
 // frontend/src/pages/Auth/Register.jsx
+// 2.1.2
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -14,7 +15,8 @@ import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import {useNavigate} from "react-router";
-import {handleAuthSuccess} from "../../api/utils.jsx";
+import { useContext } from 'react';
+import { AuthContext } from '../../api/AuthContext.jsx';
 
 function Register() {
   const [email, setEmail] = useState('');
@@ -25,6 +27,7 @@ function Register() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   let gotoPage = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,7 +44,7 @@ function Register() {
     axios.post('/user/auth/register', { email, password, name })
       .then((response) => {
         if (response?.data?.token) {
-          handleAuthSuccess(response.data.token, email);
+          login(response.data.token, email);
           setSuccess(true);
           gotoPage('/');
         }
@@ -122,8 +125,8 @@ function Register() {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="/frontend/src/pages/Auth/Login" variant="body2">
-                Already have an account? Log in
+              <Link href="/login" variant="body2">
+                Already have an account? Login
               </Link>
             </Grid>
           </Grid>

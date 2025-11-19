@@ -115,35 +115,134 @@ export default function ListingEditor() {
           </Card>
         </Grid>
         <Grid item xs={12} md={7}>
+      <Box sx={{ mt: 3 }}>
+        <Grid item xs={12} md={12}>
           <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <TextField label="Listing Title" name="title" value={formData.title??""} onChange={handleChange} required />
+            {/* Title */}
+            <TextField label="Listing Title" name="title" value={formData.title ?? ""} onChange={handleChange} required />
+            {/* Address */}
             <AddressField address={formData.address} setAddress={(address) => setFormData({ ...formData, address })} />
-            <TextField label="Price (per night)" name="price" value={formData.price??""} onChange={handleChange} required />
-            <TextField label="Property Type" name="propertyType" value={formData.metadata.propertyType??""} onChange={handleChange} />
-            <TextField label="Number of Bathrooms" name="numBathrooms" value={formData.metadata.numBathrooms??""} onChange={handleChange} />
-            <TextField
-              label="Bedrooms"
-              name="bedrooms"
-              value={formData.metadata.bedrooms??""}
-              onChange={handleChange}
-            />
-            <TextField
-              label="Amenities"
-              name="amenities"
-              value={formData.metadata.amenities??""}
-              onChange={handleChange}
-            />
+            {/* Price */}
+            <TextField label="Price (per night)" name="price" value={formData.price ?? ""} onChange={handleChange} required />
+            {/* Property Type */}
+            <FormControl fullWidth variant="outlined">
+              <InputLabel id="property-type-label">Property Type</InputLabel>
+              <Select
+                labelId="property-type-label"
+                id="property-type"
+                value={formData.metadata.propertyType ?? ""}
+                onChange={handleChange}
+                name="propertyType"
+                label="Property Type"
+                variant="outlined"
+                required
+              >
+                <MenuItem value="Apartment">Apartment</MenuItem>
+                <MenuItem value="House">House</MenuItem>
+                <MenuItem value="Condo">Condo</MenuItem>
+                <MenuItem value="Townhouse">Townhouse</MenuItem>
+                <MenuItem value="Villa">Villa</MenuItem>
+              </Select>
+            </FormControl>
+            {/* Bathrooms */}
+            <TextField label="Number of Bathrooms" name="bathrooms" value={formData.metadata.bathrooms ?? ""} onChange={handleChange} />
+            {/* Bedrooms */}
+            <Typography variant="h6">Bedrooms</Typography>
+            {formData.metadata.bedrooms.map((bedroom, idx) => (
+              <Paper key={idx} sx={{ p: 2, mb: 2, border: '1px solid #ccc', borderRadius: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                  <TextField
+                    label="Bedroom Name"
+                    value={bedroom.name}
+                    onChange={(e) => {
+                      const newBedrooms = [...formData.metadata.bedrooms];
+                      newBedrooms[idx].name = e.target.value;
+                      setFormData({ ...formData, metadata: { ...formData.metadata, bedrooms: newBedrooms } });
+                    }}
+                    size="small"
+                  />
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    size="small"
+                    onClick={() => {
+                      const newBedrooms = formData.metadata.bedrooms.filter((_, i) => i !== idx);
+                      setFormData({ ...formData, metadata: { ...formData.metadata, bedrooms: newBedrooms } });
+                    }}
+                  >
+                    Remove Bedroom
+                  </Button>
+                </Box>
+                <Typography variant="subtitle2">Beds</Typography>
+                {bedroom.beds.map((bed, bIdx) => (
+                  <Box key={bIdx} sx={{ display: 'flex', gap: 1, mb: 1 }}>
+                    <TextField
+                      label="Type"
+                      value={bed.type}
+                      onChange={(e) => {
+                        const newBedrooms = [...formData.metadata.bedrooms];
+                        newBedrooms[idx].beds[bIdx].type = e.target.value;
+                        setFormData({ ...formData, metadata: { ...formData.metadata, bedrooms: newBedrooms } });
+                      }}
+                      size="small"
+                    />
+                    <TextField
+                      label="Count"
+                      type="number"
+                      value={bed.count}
+                      onChange={(e) => {
+                        const newBedrooms = [...formData.metadata.bedrooms];
+                        newBedrooms[idx].beds[bIdx].count = parseInt(e.target.value) || 1;
+                        setFormData({ ...formData, metadata: { ...formData.metadata, bedrooms: newBedrooms } });
+                      }}
+                      size="small"
+                    />
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      size="small"
+                      onClick={() => {
+                        const newBedrooms = [...formData.metadata.bedrooms];
+                        newBedrooms[idx].beds = newBedrooms[idx].beds.filter((_, i) => i !== bIdx);
+                        setFormData({ ...formData, metadata: { ...formData.metadata, bedrooms: newBedrooms } });
+                      }}
+                    >
+                      Remove Bed
+                    </Button>
+                  </Box>
+                ))}
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => {
+                    const newBedrooms = [...formData.metadata.bedrooms];
+                    newBedrooms[idx].beds.push({ type: '', count: 1 });
+                    setFormData({ ...formData, metadata: { ...formData.metadata, bedrooms: newBedrooms } });
+                  }}
+                >
+                  Add Bed
+                </Button>
+              </Paper>
+            ))}
+            <Button
+              variant="outlined"
+              onClick={() => {
+                const newBedrooms = [...formData.metadata.bedrooms, { name: '', beds: [] }];
+                setFormData({ ...formData, metadata: { ...formData.metadata, bedrooms: newBedrooms } });
+              }}
+            >
+              Add Bedroom
+            </Button>
+            {/* Amenities */}
+            <TextField label="Amenities (comma separated)" name="amenities" value={formData.metadata.amenities ?? ""} onChange={handleChange} />
+            {/* Submit */}
             <Box display="flex" gap={2} mt={2}>
-              <Button type="submit" variant="contained" color="primary">
-                {listingId ? "Update Listing" : "Create Listing"}
-              </Button>
-              <Button variant="outlined" onClick={() => navigate('/listing-manager')}>
-              Cancel
-              </Button>
+              <Button type="submit" variant="contained" color="primary">{listingId ? "Update Listing" : "Create Listing"}</Button>
+              <Button variant="outlined" onClick={() => navigate('/listing-manager')}>Cancel</Button>
             </Box>
           </Box>
         </Grid>
-      </Grid>
+      </Box>
     </Paper>
   );
 }

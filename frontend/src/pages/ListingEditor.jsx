@@ -1,7 +1,8 @@
+// frontend/src/pages/ListingEditor.jsx
+// 2.2.3 Edit and Create Listings Page
 import { useState, useEffect } from 'react';
-import { TextField, Button, Box, Typography, Paper, Grid, Card, CardMedia, CardContent } from '@mui/material';
+import { TextField, Button, Box, Typography, Paper, Grid, Card, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import Listing from '../classes/Listing.jsx';
-import Address from "../classes/Address.jsx";
 import AddressField from "../components/AddressField.jsx";
 import { useParams, useNavigate } from 'react-router';
 import { img2base64 } from '../api/utils.jsx';
@@ -10,24 +11,27 @@ export default function ListingEditor() {
   const { listingId } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    title: '',//string
-    address: new Address(),//Address
-    price: '',//number
-    thumbnail: '',//string
+    title: '',
+    address: { street: '', city: '', state: '', zip: '', country: '' },
+    price: '',
+    thumbnail: '',
     metadata: {
-      propertyType: '',//string
-      numBathrooms: '',//number
-      bedrooms: '',//number
-      amenities: '',//string
+      propertyType: '',
+      bathrooms: '',
+      bedrooms: [],
+      amenities: '',
+      images: []
     },
+    availability: [],
   });
 
+  // load listing if editing
   useEffect(() => {
     if (listingId) {
-      // detect listing id, know edit now, get specific data
       const listingInstance = new Listing();
       listingInstance.getListingById(listingId).then(data => {
-        setFormData(data.listing); // load data
+        console.log(data);
+        setFormData(data);
       });
     }
   }, [listingId]);
@@ -39,13 +43,13 @@ export default function ListingEditor() {
         ...formData,
         metadata: {
           ...formData.metadata,
-          [name]: value,
-        },
+          [name]: value
+        }
       });
     } else {
       setFormData({
         ...formData,
-        [name]: value,
+        [name]: value
       });
     }
   }
@@ -54,16 +58,11 @@ export default function ListingEditor() {
     e.preventDefault();
     const listingInstance = new Listing();
     if (listingId) {
-      // submit as UPDATE/EDIT
       listingInstance.updateListing(listingId, formData).then(() => navigate('/listing-manager'));
     } else {
-      // submit as CREATE
       listingInstance.postListing(formData).then(() => navigate('/listing-manager'));
     }
   }
-
-  console.log("Here is listingId:", listingId);
-  console.log("Here is formData:", formData);
 
   return (
     <Paper

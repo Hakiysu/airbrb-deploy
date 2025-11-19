@@ -7,7 +7,7 @@ function AddressField({ address, setAddress }) {
 
   return (
     <Grid container spacing={2} sx={{ mt: 2 }}>
-      <Grid item xs={12}>
+      <Grid sx ={{ gridColumn: 'span 12' }}>
         <TextField
           label="Street"
           value={address.street ?? ""}
@@ -16,7 +16,7 @@ function AddressField({ address, setAddress }) {
           fullWidth
         />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid sx ={{ gridColumn: 'span 12' }}>
         <TextField
           label="City"
           value={address.city ?? ""}
@@ -25,7 +25,7 @@ function AddressField({ address, setAddress }) {
           fullWidth
         />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid sx ={{ gridColumn: 'span 12' }}>
         <TextField
           label="State"
           value={address.state ?? ""}
@@ -34,7 +34,7 @@ function AddressField({ address, setAddress }) {
           fullWidth
         />
       </Grid>
-      <Grid item xs={12} sm={4}>
+      <Grid sx ={{ gridColumn: 'span 12' }}>
         <TextField
           label="ZIP"
           value={address.zip ?? ""}
@@ -43,7 +43,7 @@ function AddressField({ address, setAddress }) {
           fullWidth
         />
       </Grid>
-      <Grid item xs={12} sm={8}>
+      <Grid sx ={{ gridColumn: 'span 12' }}>
         <TextField
           label="Country"
           value={address.country ?? ""}

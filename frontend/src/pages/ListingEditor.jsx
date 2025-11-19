@@ -65,56 +65,87 @@ export default function ListingEditor() {
   }
 
   return (
-    <Paper
-      sx={{
-        p: 4,
-        width: '90%',
-        margin: '40px auto',
-        borderRadius: 3,
-      }}
-    >
-      <Typography variant="h5" gutterBottom>
-        {listingId ? "Edit Listing" : "Create Listing"}
-      </Typography>
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={5} display="flex" justifyContent="center">
-          <Card sx={{ borderRadius: 2, overflow: 'hidden' , width: '300px'}}>
-            <CardMedia
-              component="img"
-              height="200"
-              image={formData.thumbnail}
-              alt={formData.title}
-            />
-            <CardContent>
-              <Typography variant="h6" gutterBottom>{formData.title || 'Untitled Listing'}</Typography>
-              <Typography variant="body2">Price: ${formData.price || 0} per night</Typography>
-              <Typography variant="body2">Type: {formData.metadata.propertyType || '-'}</Typography>
-              <Typography variant="body2">Bathrooms: {formData.metadata.numBathrooms || 0}</Typography>
-              <Typography variant="body2">Bedrooms: {formData.metadata.bedrooms || 0}</Typography>
-              <Typography variant="body2">Amenities: {formData.metadata.amenities || '-'}</Typography>
-              <Button
-                variant="outlined"
-                component="label"
-                sx={{ mt: 2 }}
-              >
-                Upload Thumbnail
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  onChange={async (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const base64 = await img2base64(file);
-                      setFormData({ ...formData, thumbnail: base64 });
-                    }
-                  }}
-                />
-              </Button>
-            </CardContent>
+    <Paper sx={{ p: 4, width: '90%', margin: '40px auto', borderRadius: 3 }}>
+      <Grid container spacing={2}>
+        {/* Left: Info */}
+        <Grid item xs={12} md={6}>
+          <Card sx={{ p: 2 }}>
+            {formData.thumbnail && (
+              <Box sx={{ mb: 2, width: '200px' }}>
+                <img src={formData.thumbnail} alt="Thumbnail" style={{ width: '100%', borderRadius: 4 }} />
+              </Box>
+            )}
+            <Typography variant="h6">{formData.title || 'Untitled Listing'}</Typography>
+            <Typography>Price: ${formData.price || 0}</Typography>
+            <Typography>Type: {formData.metadata.propertyType}</Typography>
+            <Typography>Bathrooms: {formData.metadata.bathrooms}</Typography>
+            <Typography>Bedrooms: {formData.metadata.bedrooms.length}</Typography>
+            <Typography>Amenities: {formData.metadata.amenities}</Typography>
+            <Button variant="outlined" component="label" sx={{ mt: 2 }}>
+              Upload Thumbnail
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={async e => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const base64 = await img2base64(file);
+                    setFormData({ ...formData, thumbnail: base64 });
+                  }
+                }}
+              />
+            </Button>
           </Card>
         </Grid>
-        <Grid item xs={12} md={7}>
+
+        {/* Right: Images */}
+        <Grid item xs={12} md={6}>
+          <Card sx={{ p: 2 }}>
+            <Typography variant="h6">Property Images</Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+              {formData.metadata.images?.map((img, idx) => (
+                <Box key={idx} sx={{ position: 'relative' }}>
+                  <img src={img} alt={`Property ${idx}`} width={200} style={{ borderRadius: 4 }} />
+                  <Button
+                    size="small"
+                    color="error"
+                    sx={{ position: 'absolute', top: -8, right: -8, minWidth: 0, padding: '2px 4px' }}
+                    onClick={() => {
+                      const newImages = [...formData.metadata.images];
+                      newImages.splice(idx, 1);
+                      setFormData({ ...formData, metadata: { ...formData.metadata, images: newImages } });
+                    }}
+                  >
+                    X
+                  </Button>
+                </Box>
+              ))}
+            </Box>
+            <Button
+              variant="outlined"
+              component="label"
+              sx={{ mt: 1 }}
+            >
+              Upload Images
+              <input
+                type="file"
+                multiple
+                hidden
+                accept="image/*"
+                onChange={async (e) => {
+                  const files = Array.from(e.target.files);
+                  const base64Images = await Promise.all(files.map(f => img2base64(f)));
+                  setFormData({
+                    ...formData,
+                    metadata: { ...formData.metadata, images: [...(formData.metadata.images || []), ...base64Images] }
+                  });
+                }}
+              />
+            </Button>
+          </Card>
+        </Grid>
+      </Grid>
       <Box sx={{ mt: 3 }}>
         <Grid item xs={12} md={12}>
           <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>

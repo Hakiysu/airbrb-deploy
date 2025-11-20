@@ -94,7 +94,7 @@ export default function Filter({ allListings, onFilter }) {
     }
 
     console.log('After filtering & sorting data:', filteredListings);
-    onFilter(filteredListings);
+    onFilter(filteredListings, { startDate, endDate });
   };
 
   const handleClear = () => {
@@ -105,7 +105,12 @@ export default function Filter({ allListings, onFilter }) {
     setSortOrder('asc');
     setStartDate('');
     setEndDate('');
-    onFilter(allListings);
+    const clearedListings = allListings.map(l => ({
+      ...l,
+      startDate: l.startDate || null,
+      endDate: l.endDate || null,
+    }));
+    onFilter(clearedListings);
   };
 
   return (

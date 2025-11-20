@@ -156,7 +156,7 @@ export default function ListingEditor() {
             {/* Title */}
             <TextField label="Listing Title" name="title" value={formData.title ?? ""} onChange={handleChange} required />
             {/* Address */}
-            <AddressField address={formData.address} setAddress={(address) => setFormData({ ...formData, address })} />
+            <AddressField address={formData.address} name="address" setAddress={(address) => setFormData({ ...formData, address })} />
             {/* Price */}
             <TextField label="Price (per night)" name="price" value={formData.price ?? ""} onChange={handleChange} required />
             {/* Property Type */}

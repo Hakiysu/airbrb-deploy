@@ -8,7 +8,6 @@ import {
   TextField,
   Typography,
   Slider,
-  Divider,
   MenuItem,
   Select,
   FormControl
@@ -116,40 +115,69 @@ export default function Filter({ allListings, onFilter }) {
   return (
     <Container sx={{ my: 4, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
       <Typography variant="h6" gutterBottom>Listings Filter</Typography>
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} divider={<Divider orientation="vertical" flexItem />}>
-        <TextField label="Search (Title/City)" variant="outlined" fullWidth value={searchText} onChange={e => setSearchText(e.target.value)} />
-        <Box>
+      <TextField
+        label="Search (Title/City)"
+        variant="outlined"
+        fullWidth
+        value={searchText}
+        onChange={e => setSearchText(e.target.value)}
+        sx={{ minWidth: { xs: '100%', sm: 200 } }}
+      />
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={2}
+        sx={{ mt: 2, justifyContent: 'center' , gap: 2 , borderRadius: 1, p: 2, border: '1px solid #ccc', padding: 2}}
+      >
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Typography gutterBottom>Bedrooms range</Typography>
-          <Slider value={bedroomRange} onChange={(_, val) => setBedroomRange(val)} valueLabelDisplay="auto" min={0} max={10} sx={{ width: 200 }} />
+          <Slider
+            value={bedroomRange}
+            onChange={(_, val) => setBedroomRange(val)}
+            valueLabelDisplay="auto"
+            min={0}
+            max={10}
+          />
         </Box>
-        <Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Typography gutterBottom>Price range ($/night)</Typography>
-          <Slider value={priceRange} onChange={(_, val) => setPriceRange(val)} valueLabelDisplay="auto" min={0} max={1000} sx={{ width: 200 }} />
+          <Slider
+            value={priceRange}
+            onChange={(_, val) => setPriceRange(val)}
+            valueLabelDisplay="auto"
+            min={0}
+            max={1000}
+          />
         </Box>
-        <Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Typography gutterBottom>Sort by</Typography>
-          <FormControl size="small" sx={{ minWidth: 120, mb: 1 }}>
-            <Select value={sortField} onChange={e => setSortField(e.target.value)} variant="outlined">
-              <MenuItem value="">None</MenuItem>
-              <MenuItem value="beds">Beds</MenuItem>
-              <MenuItem value="price">Price</MenuItem>
-              <MenuItem value="rating">Rating</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <Select value={sortOrder} onChange={e => setSortOrder(e.target.value)} variant="outlined">
-              <MenuItem value="asc">Ascending</MenuItem>
-              <MenuItem value="desc">Descending</MenuItem>
-            </Select>
-          </FormControl>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <Select value={sortField} onChange={e => setSortField(e.target.value)} variant="outlined" MenuProps={{ disableScrollLock: true, disablePortal: true}}>
+                <MenuItem value="">None</MenuItem>
+                <MenuItem value="beds">Beds</MenuItem>
+                <MenuItem value="price">Price</MenuItem>
+                <MenuItem value="rating">Rating</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <Select value={sortOrder} onChange={e => setSortOrder(e.target.value)} variant="outlined" MenuProps={{ disableScrollLock: true , disablePortal: true }}>
+                <MenuItem value="asc">Ascending</MenuItem>
+                <MenuItem value="desc">Descending</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
         </Box>
-        <Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Typography gutterBottom>Date range</Typography>
-          <TextField type="date" value={startDate} onChange={e => setStartDate(e.target.value)} sx={{ mb: 1 }} />
-          <TextField type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Typography sx={{ alignSelf: 'center' }}>From:</Typography>
+            <TextField type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+            <Typography sx={{ alignSelf: 'center' }}>To:</Typography>
+            <TextField type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+          </Box>
         </Box>
       </Stack>
-      <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+      <Box sx={{ mt: 2, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
         <Button variant="contained" color="primary" onClick={handleApplyFilters}>Apply Filters</Button>
         <Button variant="outlined" color="secondary" onClick={handleClear}>Clear Filters</Button>
       </Box>

@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Rating, Paper } from '@mui/material';
 import Listing from '../classes/Listing.jsx';
 import {useAlert} from "../api/useAlert.jsx";
-
+import {useContext} from "react";
+import { AuthContext } from "../api/AuthContext.jsx";
 export default function ReviewsSection({ listingId, bookingId }) {
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({ score: 0, comment: '' });
   const { showAlert } = useAlert();
+  const { email } = useContext(AuthContext);
 
   useEffect(() => {
     fetchReviews().then();
@@ -15,18 +17,24 @@ export default function ReviewsSection({ listingId, bookingId }) {
 
   const fetchReviews = async () => {
     const listingInstance = new Listing();
-    const data = await listingInstance.getListingsWithMetadata(listingId).reviews || [];
-    console.log('Fetched reviews:', data);
-    setReviews(data);
+    const data = await listingInstance.getListingsWithMetadata(listingId);
+    data.forEach(listing => {
+      if (listing.reviews && listing.reviews.length > 0) {
+        setReviews(listing.reviews);
+      }
+    });
   };
+  console.log("Reviews:", reviews);
 
   const handleSubmitReview = async () => {
     if (!newReview.comment || newReview.score <= 0) return;
     try {
       const listingInstance = new Listing();
       const reviewData={
-        reviews: [newReview]
+        review: newReview
       }
+      reviewData.review.date = new Date().toISOString();
+      reviewData.review.reviewer = email;
       await listingInstance.reviewListing(listingId, bookingId, reviewData);// Submit the new review
       setNewReview({ score: 0, comment: '' });// Clear input fields
       await fetchReviews();
@@ -36,16 +44,18 @@ export default function ReviewsSection({ listingId, bookingId }) {
     }
   };
 
+  console.log(listingId, bookingId);
   return (
     <Paper sx={{ p: 3 }}>
       <Typography variant="h6">Reviews</Typography>
       {/* Existing Reviews */}
       <Box sx={{ mt: 2 }}>
-        {reviews.length ? (
+        {reviews.length > 0 ? (
           reviews.map((r, idx) => (
             <Paper key={idx} sx={{ p: 2, mb: 1, borderRadius: 1, backgroundColor: '#f9f9f9' }}>
-              <Typography variant="subtitle2">Rating: {r.score}/5</Typography>
+              <Rating name="read-only" value={r.score} readOnly size="small" />
               <Typography variant="body2">{r.comment}</Typography>
+              <Typography variant="caption" color="textSecondary">- {r.reviewer} on {new Date(r.date).toLocaleDateString()}</Typography>
             </Paper>
           ))
         ) : (

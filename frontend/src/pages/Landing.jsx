@@ -74,7 +74,7 @@ export default function LandingPage() {
   return (
     <Box p={4}>
       <Typography variant="h4" gutterBottom>
-        Listings
+        Landing Page
       </Typography>
       <Filter allListings={allListings} onFilter={handleFilterResult} />
       <Box mb={4} display="flex" gap={2}>

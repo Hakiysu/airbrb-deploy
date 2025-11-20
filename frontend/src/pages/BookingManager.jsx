@@ -16,14 +16,15 @@ import { useParams } from 'react-router';
 import Booking from '../classes/Booking.jsx';
 import Listing from '../classes/Listing.jsx';
 import { calculatePrice } from '../api/utils.jsx';
+import { useAlert} from "../api/useAlert.jsx";
 
 export default function BookingManager() {
   const { listingId } = useParams();
-
   const [listing, setListing] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [pendingBookings, setPendingBookings] = useState([]);
   const [stats, setStats] = useState({ totalDays: 0, totalProfit: 0 });
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     async function fetchData() {
@@ -41,9 +42,6 @@ export default function BookingManager() {
 
         setBookings(listingBookings);
         setPendingBookings(listingBookings.filter(b => b.status === 'pending'));
-
-        console.log('Listing bookings:', listingBookings);
-        console.log('Pending bookings:', listingBookings.filter(b => b.status === 'pending'));
 
         // calculate stats for the current year
         const currentYear = new Date().getFullYear();
@@ -75,22 +73,39 @@ export default function BookingManager() {
   const handleAccept = async (booking) => {
     try {
       const bookingObj = new Booking(booking.id);
-      console.log('Accepting booking:', bookingObj);
       await bookingObj.acceptBooking(booking.id);
       setPendingBookings(prev => prev.filter(b => b.id !== booking.id));
+      setBookings(prev => prev.map(b => b.id === booking.id ? { ...b, status: 'accepted' } : b));
+      showAlert('Booking accepted successfully', 'success');
     } catch (err) {
       console.error(err);
+      showAlert('Failed to accept booking: ' + err.message, 'error');
     }
   };
 
   const handleDecline = async (booking) => {
     try {
       const bookingObj = new Booking(booking.id);
-      await bookingObj.rejectBooking();
+      await bookingObj.declineBooking(booking.id);
       setPendingBookings(prev => prev.filter(b => b.id !== booking.id));
-      setBookings(prev => prev.map(b => b.id === booking.id ? { ...b, status: 'rejected' } : b));
+      setBookings(prev => prev.map(b => b.id === booking.id ? { ...b, status: 'declined' } : b));
+      showAlert('Booking declined successfully', 'success');
     } catch (err) {
       console.error(err);
+      showAlert('Failed to decline booking: ' + err.message, 'error');
+    }
+  };
+
+  const handleDelete = async (booking) => {
+    try {
+      const bookingObj = new Booking(booking.id);
+      await bookingObj.deleteBooking(booking.id);
+      setBookings(prev => prev.filter(b => b.id !== booking.id));
+      setPendingBookings(prev => prev.filter(b => b.id !== booking.id));
+      showAlert('Booking deleted successfully', 'success');
+    } catch (err) {
+      console.error(err);
+      showAlert('Failed to delete booking: ' + err.message, 'error');
     }
   };
 
@@ -141,6 +156,7 @@ export default function BookingManager() {
                 <TableCell>
                   <Button color="success" onClick={() => handleAccept(b)}>Accept</Button>
                   <Button color="error" onClick={() => handleDecline(b)}>Decline</Button>
+                  <Button color="secondary" onClick={() => handleDelete(b)}>Delete</Button>
                 </TableCell>
               </TableRow>
             ))}

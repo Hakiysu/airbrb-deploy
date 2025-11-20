@@ -56,6 +56,7 @@ export default function PublishDialog({ open, listing, onClose, onConfirm }) {
                     value={range.start}
                     onChange={(e) => handleDateChange(idx, 'start', e.target.value)}
                     size="small"
+                    InputLabelProps={{ shrink: true }}
                   />
                   <TextField
                     label="End"
@@ -63,6 +64,7 @@ export default function PublishDialog({ open, listing, onClose, onConfirm }) {
                     value={range.end}
                     onChange={(e) => handleDateChange(idx, 'end', e.target.value)}
                     size="small"
+                    InputLabelProps={{ shrink: true }}
                   />
                   <Button color="error" size="small" onClick={() => removeRange(idx)}>Remove</Button>
                 </Box>

@@ -68,7 +68,7 @@ export default function ListingEditor() {
     <Paper sx={{ p: 4, width: '90%', margin: '40px auto', borderRadius: 3 }}>
       <Grid container spacing={2}>
         {/* Left: Info */}
-        <Grid item xs={12} md={6}>
+        <Grid sx={{ flexBasis: '30%', mb: 2 }}>
           <Card sx={{ p: 2 }}>
             {formData.thumbnail && (
               <Box sx={{ mb: 2, width: '200px' }}>
@@ -100,7 +100,7 @@ export default function ListingEditor() {
         </Grid>
 
         {/* Right: Images */}
-        <Grid item xs={12} md={6}>
+        <Grid sx={{ mb: 2, flexGrow: 1 }}>
           <Card sx={{ p: 2 }}>
             <Typography variant="h6">Property Images</Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
@@ -147,7 +147,7 @@ export default function ListingEditor() {
         </Grid>
       </Grid>
       <Box sx={{ mt: 3 }}>
-        <Grid item xs={12} md={12}>
+        <Grid sx={{ width: '100%' }}>
           <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {/* Title */}
             <TextField label="Listing Title" name="title" value={formData.title ?? ""} onChange={handleChange} required />

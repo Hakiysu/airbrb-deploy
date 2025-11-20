@@ -14,6 +14,7 @@ import { AuthContext } from '../api/AuthContext.jsx';
 import StarIcon from '@mui/icons-material/Star';
 import { getTotalBeds } from '../api/utils.jsx';
 import PublishDialog from '../pages/Dialogs/PublishDialog.jsx';
+import ProfitChart from '../components/ProfitChart.jsx';
 
 export default function ListingManager() {
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
@@ -41,6 +42,7 @@ export default function ListingManager() {
     setDeleteListingId(id);
     setDialogOpen(true);
   };
+  const handleBookingManager = (id) => navigate(`/booking-manager/${id}`);
   const actDelete = () => {
     new Listing().deleteListing(deleteListingId).then(() => {
       setListings(listings.filter(l => l.id !== deleteListingId));
@@ -125,10 +127,12 @@ export default function ListingManager() {
                       color={listing.published ? "warning" : "primary"}
                       size="small"
                       onClick={() => openPublishDialog(listing)}
+                      sx={{ ml: 1 }}
                     >
                       {listing.published ? "Take Offline" : "Publish"}
                     </Button>
                     <Button size="small" variant="outlined" color="warning" sx={{ ml: 1 }} onClick={() => handleDelete(listing.id)}>Delete</Button>
+                    <Button size="small" variant="contained" sx={{ ml:1}} onClick={() => handleBookingManager(listing.id)}>Booking Manager</Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -136,6 +140,7 @@ export default function ListingManager() {
           </Table>
         </TableContainer>
       )}
+      <ProfitChart />
     </Container>
   );
 }

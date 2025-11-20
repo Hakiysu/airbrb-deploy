@@ -14,3 +14,12 @@ export function getTotalBeds(listing) {
     return total + bedroomBedCount;
   }, 0);
 }
+
+export function calculatePrice(listing, startDate, endDate) {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const timeDiff = end - start;
+  const dayCount = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  if (dayCount <= 0) return 0;
+  return dayCount * listing.price;
+}

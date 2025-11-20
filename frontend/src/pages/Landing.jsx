@@ -4,25 +4,72 @@ import { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import Filter from '../components/Filter.jsx';
 import Listing from '../classes/Listing.jsx';
+import { useContext } from 'react';
+import { AuthContext } from '../api/AuthContext.jsx';
+import Booking from "../classes/Booking.jsx";
 
 export default function LandingPage() {
   const [allListings, setAllListings] = useState([]);
   const [displayListings, setDisplayListings] = useState([]);
   const [searchDates, setSearchDates] = useState({ startDate: '', endDate: '' });
+  const {token, email} = useContext(AuthContext);
 
   useEffect(() => {
-    const listingInstance = new Listing();
-    listingInstance.getListingsWithMetadata().then((listings) => {
-      console.log('Fetched listings at landing:', listings);
-      setAllListings(listings);
-      setDisplayListings(listings);
-    });
+    const fetchData = async () => {
+      const listingInstance = new Listing();
+      const bookingInstance = new Booking();
+      // get all listings with metadata
+      let listings = await listingInstance.getListingsWithMetadata();
+      listings = listings.filter(l => l.published);
+      // if no token, sort by title only
+      if (!token) {
+        listings.sort((a, b) => a.title.localeCompare(b.title));
+        setAllListings(listings);
+        setDisplayListings(listings);
+        return;
+      }
+      // get all bookings
+      const bookings = await bookingInstance.getAllBookings();
+      console.log("All Bookings:", bookings);
+      const currentUser = email;
+      // filter bookings made by current user with accepted or pending status
+      const userBookedListingIds = bookings
+        .filter(
+          b =>
+            b.owner === currentUser &&
+            (b.status === "accepted" || b.status === "pending")
+        )
+        .map(b => b.listingId);
+      // str to num
+      userBookedListingIds.forEach((id, index) => {
+        userBookedListingIds[index] = Number(id);
+      });
+      // sort listings: booked first (by title), then others (by title)
+      const priorityListings = [];
+      const otherListings = [];
+      listings.forEach(listing => {
+        if (userBookedListingIds.includes(listing.id)) {
+          console.log("Adding to priority:", listing);
+          priorityListings.push(listing);
+        } else {
+          console.log("Adding to others:", listing);
+          otherListings.push(listing);
+        }
+      });
 
-    // sort the listings
+      // sort priority listings by title
+      priorityListings.sort((a, b) => a.title.localeCompare(b.title));
 
-    console.log('All listings in LandingPage:', allListings);
-    console.log('Display listings in LandingPage:', displayListings);
-  }, []);
+      // others sorted by title
+      otherListings.sort((a, b) => a.title.localeCompare(b.title));
+      console.log("Priority Listings:", priorityListings);
+      console.log("Other Listings:", otherListings);
+      const finalSorted = [...priorityListings, ...otherListings];
+      setAllListings(finalSorted);
+      setDisplayListings(finalSorted);
+    };
+    fetchData();
+  }, [token]);
 
   const handleFilterResult = (filtered,dates) => {
     setDisplayListings(filtered);

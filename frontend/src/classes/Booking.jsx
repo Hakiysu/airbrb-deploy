@@ -1,3 +1,4 @@
+// frontend/src/classes/Booking.jsx
 import axios from "axios";
 
 class Booking {
@@ -33,8 +34,8 @@ class Booking {
       });
   }
 
-  acceptBooking() {
-    return axios.put(`/bookings/accept/${this.bookingId}`)
+  acceptBooking(bookingId) {
+    return axios.put(`/bookings/accept/${bookingId}`)
       .then(response => {
         return response.data;
       })
@@ -44,8 +45,8 @@ class Booking {
       });
   }
 
-  rejectBooking() {
-    return axios.put(`/bookings/reject/${this.bookingId}`)
+  rejectBooking(bookingId) {
+    return axios.put(`/bookings/reject/${bookingId}`)
       .then(response => {
         return response.data;
       })
@@ -55,8 +56,8 @@ class Booking {
       });
   }
 
-  deleteBooking() {
-    return axios.delete(`/bookings/${this.bookingId}`)
+  deleteBooking(bookingId) {
+    return axios.delete(`/bookings/${bookingId}`)
       .then(response => {
         return response.data;
       })

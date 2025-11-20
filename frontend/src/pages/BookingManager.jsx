@@ -23,7 +23,6 @@ export default function BookingManager() {
   const [listing, setListing] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [pendingBookings, setPendingBookings] = useState([]);
-  const [acceptedBookings, setAcceptedBookings] = useState([]);
   const [stats, setStats] = useState({ totalDays: 0, totalProfit: 0 });
 
   useEffect(() => {
@@ -42,11 +41,9 @@ export default function BookingManager() {
 
         setBookings(listingBookings);
         setPendingBookings(listingBookings.filter(b => b.status === 'pending'));
-        setAcceptedBookings(listingBookings.filter(b => b.status === 'accepted'));
 
         console.log('Listing bookings:', listingBookings);
         console.log('Pending bookings:', listingBookings.filter(b => b.status === 'pending'));
-        console.log('Accepted bookings:', listingBookings.filter(b => b.status === 'accepted'));
 
         // calculate stats for the current year
         const currentYear = new Date().getFullYear();
@@ -81,7 +78,6 @@ export default function BookingManager() {
       console.log('Accepting booking:', bookingObj);
       await bookingObj.acceptBooking(booking.id);
       setPendingBookings(prev => prev.filter(b => b.id !== booking.id));
-      setAcceptedBookings(prev => [...prev, { ...booking, status: 'accepted' }]);
     } catch (err) {
       console.error(err);
     }

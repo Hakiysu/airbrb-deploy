@@ -17,7 +17,6 @@ export default function BookingEditor() {
   const { email } = useContext(AuthContext);
   const { listingId } = useParams();
   const [listing, setListing] = useState(null);
-  const [booking, setBooking] = useState(null);
   const [userBookings, setUserBookings] = useState([]);
   const [tempConfirmation, setTempConfirmation] = useState('');
 
@@ -36,7 +35,6 @@ export default function BookingEditor() {
     const bookingsInstance = new Booking();
     bookingsInstance.getAllBookings().then((bookings) => {
       console.log("All bookings:", bookings);
-      setBooking(bookings);
       // Filter bookings for the current listing
       const userListingBookings = bookings.filter(b => b.listingId === listingId);
       console.log("Filtered bookings for listing:", userListingBookings);

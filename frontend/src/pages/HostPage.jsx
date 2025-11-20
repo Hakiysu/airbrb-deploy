@@ -22,7 +22,7 @@ export default function HostPage({ listings, userEmail }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
-  const handleDelete = (id) => { setDeleteId(id); setDialogOpen(true); };
+  const handleDelete = (id) => { setDeleteId(id); setDialogOpen(true);};
   const handleEdit = (id) => navigate(`/listing-editor/${id}`);
   const handleBookingManager = (id) => navigate(`/booking-manager/${id}`);
 
@@ -35,7 +35,7 @@ export default function HostPage({ listings, userEmail }) {
         <Button variant="contained" onClick={() => navigate('/listing-editor')}>Add New Listing</Button>
       </Box>
       {userListings.length === 0 ? (
-        <Typography>No listings found.</Typography>
+        <Typography sx={{ mb: 3 }}>No listings found.</Typography>
       ) : (
         <>
           <TableContainer component={Paper} sx={{ mb: 3 }}>

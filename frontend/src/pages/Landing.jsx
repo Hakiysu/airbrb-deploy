@@ -30,7 +30,6 @@ export default function LandingPage() {
       }
       // get all bookings
       const bookings = await bookingInstance.getAllBookings();
-      console.log("All Bookings:", bookings);
       const currentUser = email;
       // filter bookings made by current user with accepted or pending status
       const userBookedListingIds = bookings
@@ -49,10 +48,8 @@ export default function LandingPage() {
       const otherListings = [];
       listings.forEach(listing => {
         if (userBookedListingIds.includes(listing.id)) {
-          console.log("Adding to priority:", listing);
           priorityListings.push(listing);
         } else {
-          console.log("Adding to others:", listing);
           otherListings.push(listing);
         }
       });
@@ -62,8 +59,6 @@ export default function LandingPage() {
 
       // others sorted by title
       otherListings.sort((a, b) => a.title.localeCompare(b.title));
-      console.log("Priority Listings:", priorityListings);
-      console.log("Other Listings:", otherListings);
       const finalSorted = [...priorityListings, ...otherListings];
       setAllListings(finalSorted);
       setDisplayListings(finalSorted);

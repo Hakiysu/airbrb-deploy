@@ -45,13 +45,13 @@ class Booking {
       });
   }
 
-  rejectBooking(bookingId) {
-    return axios.put(`/bookings/reject/${bookingId}`)
+  declineBooking(bookingId) {
+    return axios.put(`/bookings/decline/${bookingId}`)
       .then(response => {
         return response.data;
       })
       .catch(error => {
-        console.error('Error rejecting booking:', error);
+        console.error('Error declining booking:', error);
         throw error;
       });
   }

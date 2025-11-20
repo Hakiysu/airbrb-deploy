@@ -34,13 +34,10 @@ export default function BookingEditor() {
     // Fetch user's existing bookings for this listing
     const bookingsInstance = new Booking();
     bookingsInstance.getAllBookings().then((bookings) => {
-      console.log("All bookings:", bookings);
       // Filter bookings for the current listing
       const userListingBookings = bookings.filter(b => b.listingId === listingId);
-      console.log("Filtered bookings for listing:", userListingBookings);
       // filter by email of logged in user
       const userListingBookingsFiltered = userListingBookings.filter(b => b.owner === email);
-      console.log("Filtered bookings for user:", userListingBookingsFiltered);
       setUserBookings(userListingBookingsFiltered);
     })
 
@@ -57,7 +54,6 @@ export default function BookingEditor() {
       return `$${listing.price}/night`;
     }
   };
-  console.log('Booking data: ', userBookings);
   const handleBookingChange = (field, value) => {
     setBookingDates({ ...bookingDates, [field]: value });
   };
@@ -77,7 +73,6 @@ export default function BookingEditor() {
       setTempConfirmation(`Booking requested: ${bookingDates.start} → ${bookingDates.end}`);
       showAlert('Booking requested successfully!', 'success');
     } catch (error) {
-      console.error('Booking failed:', error.response.data.error);
       showAlert('Booking failed: ' + error.response.data.error, 'error');
     }
   };
@@ -99,6 +94,9 @@ export default function BookingEditor() {
           </Grid>
           <Grid sx={{ pl: { md: 3 } }}>
             <Typography variant="h3">{listing.title}</Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ mt: 1, mb: 2 }}>
+              Posted on: {listing.postedOn ? new Date(listing.postedOn).toLocaleDateString() : 'N/A'}
+            </Typography>
             <Typography>Location: {listing.address.street}, {listing.address.city}, {listing.address.state}, {listing.address.zip}, {listing.address.country}</Typography>
             <Typography>Price: {showPrice()}</Typography>
             <Typography>Type: {listing.metadata.propertyType}</Typography>
@@ -152,7 +150,7 @@ export default function BookingEditor() {
                 <Box>
                   Status: {b.status === 'pending' && <span style={{ color: 'orange' }}>⏳ Pending</span>}
                   {b.status === 'accepted' && <span style={{ color: 'green' }}>✅ Accepted</span>}
-                  {b.status === 'rejected' && <span style={{ color: 'red' }}>❌ Rejected</span>}
+                  {b.status === 'declined' && <span style={{ color: 'red' }}>❌ Declined</span>}
                 </Box>
                 <Typography>Booking ID: {b.id}</Typography>
                 <Typography>Booking Owner: {b.owner}</Typography>

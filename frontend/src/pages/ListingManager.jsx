@@ -18,7 +18,6 @@ export default function ListingManager() {
       .catch(err => console.error(err));
   }, []);
 
-  console.log('Listings:', listings);
   // Handle role toggle
   const handleRoleChange = (event, newRole) => {
     if (newRole) setRole(newRole);

@@ -13,6 +13,7 @@ import {
   FormControl
 } from '@mui/material';
 import { getTotalBeds } from "../api/utils.jsx";
+import { useAlert } from '../api/useAlert.jsx';
 
 export default function Filter({ allListings, onFilter }) {
   const [searchText, setSearchText] = useState('');
@@ -22,6 +23,7 @@ export default function Filter({ allListings, onFilter }) {
   const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const { showAlert } = useAlert();
 
   const handleApplyFilters = () => {
     let filteredListings = [...allListings];
@@ -37,7 +39,6 @@ export default function Filter({ allListings, onFilter }) {
         listing.address?.country?.toLowerCase().includes(keyword)
       );
     }
-    console.log(`After text search (${searchText}):`, filteredListings);
 
     // filter by bed num
     const [minB, maxB] = bedroomRange;
@@ -91,9 +92,8 @@ export default function Filter({ allListings, onFilter }) {
         else return valB - valA;
       });
     }
-
-    console.log('After filtering & sorting data:', filteredListings);
     onFilter(filteredListings, { startDate, endDate });
+    showAlert('Filters applied', 'success');
   };
 
   const handleClear = () => {
@@ -110,6 +110,7 @@ export default function Filter({ allListings, onFilter }) {
       endDate: l.endDate || null,
     }));
     onFilter(clearedListings);
+    showAlert('Filters cleared', 'info');
   };
 
   return (

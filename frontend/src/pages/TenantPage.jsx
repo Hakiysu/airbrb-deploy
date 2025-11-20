@@ -12,9 +12,9 @@ export default function TenantPage({ listings }) {
   return (
     <>
       {publishedListings.length === 0 ? (
-        <Typography>No available listings.</Typography>
+        <Typography sx={{ mb: 3 }}>No available listings.</Typography>
       ) : (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{ mb: 3 }}>
           <Table>
             <TableHead>
               <TableRow>

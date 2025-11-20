@@ -6,9 +6,11 @@ import Listing from '../classes/Listing.jsx';
 import AddressField from "../components/AddressField.jsx";
 import { useParams, useNavigate } from 'react-router';
 import { img2base64 } from '../api/utils.jsx';
+import { useAlert } from '../api/useAlert.jsx';
 
 export default function ListingEditor() {
   const { listingId } = useParams();
+  const { showAlert } = useAlert();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
@@ -58,8 +60,10 @@ export default function ListingEditor() {
     e.preventDefault();
     const listingInstance = new Listing();
     if (listingId) {
+      showAlert('Uploading listing changes...', 'info');
       listingInstance.updateListing(listingId, formData).then(() => navigate('/listing-manager'));
     } else {
+      showAlert('Creating new listing...', 'info');
       listingInstance.postListing(formData).then(() => navigate('/listing-manager'));
     }
   }

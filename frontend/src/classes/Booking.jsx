@@ -1,7 +1,8 @@
 import axios from "axios";
+
 class Booking {
-  constructor(bookingId, owner, dateRange, totalPrice, listingId, status) {
-    this.bookingId = bookingId;
+  constructor(id, owner, dateRange, totalPrice, listingId, status) {
+    this.id = id;
     this.owner = owner;
     this.dateRange = dateRange;
     this.totalPrice = totalPrice;
@@ -9,22 +10,20 @@ class Booking {
     this.status = status;
   }
 
-  getBookingInfo() {
-    return `Booking ID: ${this.bookingId}, Owner: ${this.owner}, Date Range: ${this.dateRange.start} to ${this.dateRange.end}, Total Price: $${this.totalPrice}, Listing ID: ${this.listingId}, Status: ${this.status}`;
-  }
 
   getAllBookings() {
-    axios.get('/bookings')
+    return axios.get('/bookings/')
       .then(response => {
-        return response.data;
+        return response.data.bookings || [];
       })
       .catch(error => {
         console.error('Error fetching bookings:', error);
+        throw error;
       });
   }
 
-  postBooking(bookingData) {
-    return axios.post(`/bookings/new/${this.listingId}`, bookingData)
+  postBooking(listingId,bookingData) {
+    return axios.post(`/bookings/new/${listingId}`, bookingData)
       .then(response => {
         return response.data;
       })

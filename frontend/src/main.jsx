@@ -11,18 +11,21 @@ import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import AppRouter from "./AppRouter.jsx";
 import {AuthProvider} from "./api/AuthContext.jsx";
+import {AlertProvider} from "./api/AlertContext.jsx";
 
 axios.defaults.baseURL = BACKEND_URL;
 axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <BrowserRouter>
-        <Header />
-        <AppRouter />
-        <Footer />
-      </BrowserRouter>
-    </AuthProvider>
+    <AlertProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Header />
+          <AppRouter />
+          <Footer />
+        </BrowserRouter>
+      </AuthProvider>
+    </AlertProvider>
   </StrictMode>,
 )

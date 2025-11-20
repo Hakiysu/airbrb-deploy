@@ -17,17 +17,19 @@ export default function ReviewsSection({ listingId, bookingId }) {
 
   const fetchReviews = async () => {
     const listingInstance = new Listing();
-    const data = await listingInstance.getListingsWithMetadata(listingId);
-    data.forEach(listing => {
-      if (listing.reviews && listing.reviews.length > 0) {
-        setReviews(listing.reviews);
-      }
-    });
+    const data = await listingInstance.getListingById(listingId);
+    if (data.reviews && data.reviews.length > 0) {
+      setReviews(data.reviews);
+    } else {
+      setReviews([]);
+    }
   };
-  console.log("Reviews:", reviews);
 
   const handleSubmitReview = async () => {
-    if (!newReview.comment || newReview.score <= 0) return;
+    if (!newReview.comment || newReview.score <= 0) {
+      showAlert('Please provide both a score and a comment for your review.', 'warning');
+      return;
+    }
     try {
       const listingInstance = new Listing();
       const reviewData={
@@ -39,12 +41,10 @@ export default function ReviewsSection({ listingId, bookingId }) {
       setNewReview({ score: 0, comment: '' });// Clear input fields
       await fetchReviews();
     } catch (err) {
-      console.error('Failed to submit review:', err);
       showAlert('Review failed: ' + err.response.data.error, 'error');
     }
   };
 
-  console.log(listingId, bookingId);
   return (
     <Paper sx={{ p: 3 }}>
       <Typography variant="h6">Reviews</Typography>

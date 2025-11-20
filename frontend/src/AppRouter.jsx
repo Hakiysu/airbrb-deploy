@@ -8,6 +8,9 @@ import Login from './pages/Auth/Login.jsx';
 import ListingEditor from './pages/ListingEditor.jsx';
 import ListingManager from './pages/ListingManager.jsx';
 
+import BookingEditor from "./pages/BookingEditor.jsx";
+import BookingManager from "./pages/BookingManager.jsx";
+
 export default function AppRouter() {
   return (
     <Routes>
@@ -35,6 +38,22 @@ export default function AppRouter() {
         element={
           <AuthChecker>
             <ListingManager />
+          </AuthChecker>
+        }
+      />
+      <Route
+        path="/booking-editor/:listingId"
+        element={
+          <AuthChecker>
+            <BookingEditor />
+          </AuthChecker>
+        }
+      />
+      <Route
+        path="/booking-manager/:listingId"
+        element={
+          <AuthChecker>
+            <BookingManager />
           </AuthChecker>
         }
       />

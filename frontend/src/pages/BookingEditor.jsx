@@ -1,6 +1,6 @@
 // frontend/src/pages/BookingEditor.jsx
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useLocation } from 'react-router';
 import { Box, Typography, Button, TextField, Paper, Grid } from '@mui/material';
 import Listing from '../classes/Listing.jsx';
 import Booking from "../classes/Booking.jsx";
@@ -18,9 +18,15 @@ export default function BookingEditor() {
   const { listingId } = useParams();
   const [listing, setListing] = useState(null);
   const [booking, setBooking] = useState(null);
-  const [bookingDates, setBookingDates] = useState({ start: '', end: '' });
   const [userBookings, setUserBookings] = useState([]);
   const [tempConfirmation, setTempConfirmation] = useState('');
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const startDateFromSearch = searchParams.get('start');
+  const endDateFromSearch = searchParams.get('end');
+
+  const [bookingDates, setBookingDates] = useState({ start: startDateFromSearch || '', end: endDateFromSearch || '' });
 
   useEffect(() => {
     if (!listingId) return;
@@ -29,17 +35,31 @@ export default function BookingEditor() {
     // Fetch user's existing bookings for this listing
     const bookingsInstance = new Booking();
     bookingsInstance.getAllBookings().then((bookings) => {
-      console.log(bookings);
+      console.log("All bookings:", bookings);
       setBooking(bookings);
       // Filter bookings for the current listing
       const userListingBookings = bookings.filter(b => b.listingId === listingId);
+      console.log("Filtered bookings for listing:", userListingBookings);
       // filter by email of logged in user
       const userListingBookingsFiltered = userListingBookings.filter(b => b.owner === email);
+      console.log("Filtered bookings for user:", userListingBookingsFiltered);
       setUserBookings(userListingBookingsFiltered);
     })
 
   }, [listingId]);
 
+
+  const showPrice = () => {
+    if (startDateFromSearch && endDateFromSearch) {
+      // if provide dates
+      const totalPrice = calculatePrice(listing, startDateFromSearch, endDateFromSearch);
+      return `$${totalPrice} total for ${startDateFromSearch} → ${endDateFromSearch}`;
+    } else {
+      // no dates provided
+      return `$${listing.price}/night`;
+    }
+  };
+  console.log('Booking data: ', userBookings);
   const handleBookingChange = (field, value) => {
     setBookingDates({ ...bookingDates, [field]: value });
   };
@@ -82,7 +102,7 @@ export default function BookingEditor() {
           <Grid sx={{ pl: { md: 3 } }}>
             <Typography variant="h3">{listing.title}</Typography>
             <Typography>Location: {listing.address.street}, {listing.address.city}, {listing.address.state}, {listing.address.zip}, {listing.address.country}</Typography>
-            <Typography>Price: ${listing.price} per night</Typography>
+            <Typography>Price: {showPrice()}</Typography>
             <Typography>Type: {listing.metadata.propertyType}</Typography>
             <Typography>Bathrooms: {listing.metadata.bathrooms}</Typography>
             <Typography>Bedrooms: {listing.metadata.bedrooms.length}</Typography>
@@ -130,14 +150,24 @@ export default function BookingEditor() {
           <Box sx={{ mt: 2 }}>
             <Typography variant="subtitle1">Your Bookings:</Typography>
             {userBookings.map((b, idx) => (
-              <Typography key={idx}>{b.start} → {b.end} | Status: {b.status}</Typography>
+              <Box key={idx} sx={{ mb: 1, p: 1, border: '1px solid #ccc', borderRadius: 1 }}>
+                <Box>
+                  Status: {b.status === 'pending' && <span style={{ color: 'orange' }}>⏳ Pending</span>}
+                  {b.status === 'accepted' && <span style={{ color: 'green' }}>✅ Accepted</span>}
+                  {b.status === 'rejected' && <span style={{ color: 'red' }}>❌ Rejected</span>}
+                </Box>
+                <Typography>Booking ID: {b.id}</Typography>
+                <Typography>Booking Owner: {b.owner}</Typography>
+                <Typography>Date Range: {b.dateRange.start} → {b.dateRange.end}</Typography>
+                <Typography>Total Price: ${b.totalPrice}</Typography>
+              </Box>
             ))}
           </Box>
         )}
       </Paper>
 
       {/* Reviews */}
-      <ReviewsSection listingId={listingId} bookingId={booking ? booking.id : null} />
+      <ReviewsSection listingId={listingId} bookingId={userBookings.length > 0 ? userBookings[0].id : null} />
     </Box>
   );
 }

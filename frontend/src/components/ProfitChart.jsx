@@ -29,15 +29,15 @@ export default function ProfitChartMUI() {
         const labels = [];
         const profits = [];
 
-        last30Days.forEach((day, idx) => {
-          labels.push(`${30 - idx}d ago`);
+        last30Days.forEach((day) => {
+          labels.push(day.toISOString().slice(5, 10));
           const dailyProfit = allBookings
-            .filter(b => b.status === 'Accepted')
+            .filter(b => b.status === 'accepted')
             .reduce((sum, b) => {
               const start = new Date(b.dateRange.start);
               const end = new Date(b.dateRange.end);
               if (day >= start && day <= end) {
-                const listing = allListings.find(l => l.id === b.listingId);
+                const listing = allListings.find(l => Number(l.id) === Number(b.listingId));
                 if (!listing) return sum;
                 const dayPrice =
                   calculatePrice(listing, start, end) /
@@ -58,7 +58,7 @@ export default function ProfitChartMUI() {
   }, []);
 
   return (
-    <Paper sx={{ p: 3, mt: 3 }}>
+    <Paper sx={{ p: 3, mt: 3, mb: 3 }}>
       <Typography variant="h6" gutterBottom>
         Profit in Last 30 Days
       </Typography>

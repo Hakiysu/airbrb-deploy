@@ -27,6 +27,7 @@ export function AlertProvider({ children }) {
         autoHideDuration={4000}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{ mt: 2 }}
       >
         <Alert severity={alert.severity} onClose={handleClose}>
           {alert.message}

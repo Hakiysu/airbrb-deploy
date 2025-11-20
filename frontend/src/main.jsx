@@ -18,14 +18,14 @@ axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getIte
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AlertProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <AlertProvider>
         <BrowserRouter>
           <Header />
           <AppRouter />
           <Footer />
         </BrowserRouter>
-      </AuthProvider>
-    </AlertProvider>
+      </AlertProvider>
+    </AuthProvider>
   </StrictMode>,
 )

@@ -204,7 +204,7 @@ export default function ListingEditor() {
                     Remove Bedroom
                   </Button>
                 </Box>
-                <Typography variant="subtitle2">Beds</Typography>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>Beds:</Typography>
                 {bedroom.beds.map((bed, bIdx) => (
                   <Box key={bIdx} sx={{ display: 'flex', gap: 1, mb: 1 }}>
                     <TextField

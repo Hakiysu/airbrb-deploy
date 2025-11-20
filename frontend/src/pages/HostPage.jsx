@@ -31,6 +31,9 @@ export default function HostPage({ listings, userEmail }) {
 
   return (
     <>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Button variant="contained" onClick={() => navigate('/listing-editor')}>Add New Listing</Button>
+      </Box>
       {userListings.length === 0 ? (
         <Typography>No listings found.</Typography>
       ) : (
@@ -66,7 +69,7 @@ export default function HostPage({ listings, userEmail }) {
                     </TableCell>
                     <TableCell>{listing.reviews.length}</TableCell>
                     <TableCell>${listing.price}</TableCell>
-                    <TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>
                       <Button size="small" variant="contained" onClick={() => handleEdit(listing.id)}>Edit</Button>
                       <Button
                         size="small"

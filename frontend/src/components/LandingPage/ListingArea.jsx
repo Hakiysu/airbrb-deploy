@@ -2,12 +2,12 @@
 import ListingCard from "./ListingCard.jsx";
 import { Grid } from "@mui/material";
 
-export default function ListingArea({ listings }) {
+export default function ListingArea({ listings, searchDates }) {
   return (
     <Grid container spacing={2} justifyContent="flex-start">
       {listings.map((listing) => (
         <Grid key={listing.id} sx={{ width: 300 }}>
-          <ListingCard listing={listing} />
+          <ListingCard listing={listing} searchDates={searchDates} />
         </Grid>
       ))}
     </Grid>

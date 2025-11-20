@@ -2,9 +2,9 @@
 import { Card, CardMedia, CardContent, Typography, Rating, Box } from '@mui/material';
 import { Bed, Hotel, Bathtub, Apartment } from '@mui/icons-material';
 import { useNavigate } from "react-router";
-import { getTotalBeds } from '../../api/utils.jsx';
+import {calculatePrice, getTotalBeds} from '../../api/utils.jsx';
 
-export default function ListingCard({ listing }) {
+export default function ListingCard({ listing, searchDates }) {
   const thumbnail = listing.thumbnail || '/default.jpg';
   const title = listing.title || 'Untitled Listing';
   const reviewCount = Array.isArray(listing.reviews) ? listing.reviews.length : 0;
@@ -18,6 +18,21 @@ export default function ListingCard({ listing }) {
   const bathrooms = listing.metadata?.bathrooms || 0;
   const propertyType = listing.metadata?.propertyType || '';
 
+  let totalPrice = null;
+  if (searchDates?.startDate && searchDates?.endDate && price) {
+    totalPrice = calculatePrice(listing, searchDates.startDate, searchDates.endDate);
+  }
+
+  const handleClick = () => {
+    // pass dates as query params if available
+    let path = `/booking-editor/${listing.id}`;
+    // if search dates exist, append them as query parameters, or use empty strings
+    if (searchDates?.startDate && searchDates?.endDate) {
+      path += `?start=${searchDates.startDate}&end=${searchDates.endDate}`;
+    }
+    navigate(path);
+  };
+
   return (
     <Card
       sx={{
@@ -27,7 +42,7 @@ export default function ListingCard({ listing }) {
         transition: '0.2s',
         '&:hover': { boxShadow: 6 }
       }}
-      onClick={() => navigate(`/booking-editor/${listing.id}`)}
+      onClick={handleClick}
     >
       <CardMedia
         component="img"
@@ -75,11 +90,9 @@ export default function ListingCard({ listing }) {
             ({reviewCount} reviews)
           </Typography>
         </Box>
-        {price && (
-          <Typography variant="subtitle1" sx={{ fontWeight: 600, mt: 1 }}>
-            ${price}/night
-          </Typography>
-        )}
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, mt: 1 }}>
+          {totalPrice ? `$${totalPrice} total` : `$${price}/night`}
+        </Typography>
       </CardContent>
     </Card>
   );

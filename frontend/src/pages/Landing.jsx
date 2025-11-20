@@ -8,6 +8,7 @@ import Listing from '../classes/Listing.jsx';
 export default function LandingPage() {
   const [allListings, setAllListings] = useState([]);
   const [displayListings, setDisplayListings] = useState([]);
+  const [searchDates, setSearchDates] = useState({ startDate: '', endDate: '' });
 
   useEffect(() => {
     const listingInstance = new Listing();
@@ -23,8 +24,9 @@ export default function LandingPage() {
     console.log('Display listings in LandingPage:', displayListings);
   }, []);
 
-  const handleFilterResult = (filtered) => {
+  const handleFilterResult = (filtered,dates) => {
     setDisplayListings(filtered);
+    setSearchDates(dates);
   };
 
   return (
@@ -34,9 +36,8 @@ export default function LandingPage() {
       </Typography>
       <Filter allListings={allListings} onFilter={handleFilterResult} />
       <Box mb={4} display="flex" gap={2}>
-        <ListingArea listings={displayListings} />
+        <ListingArea listings={displayListings} searchDates={searchDates} />
       </Box>
     </Box>
   );
-
 }

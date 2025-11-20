@@ -17,11 +17,9 @@ export default function Header() {
           Airbrb
         </Typography>
         <Button color="inherit" component={Link} to="/">Home</Button>
-        <Button color="inherit" component={Link} to="/listings">Listings</Button>
+        <Button color="inherit" component={Link} to="/listing-manager">Listings</Button>
         {token ? (
           <>
-            <Button color="inherit" component={Link} to="/listing-manager">Manage Listings</Button>
-            <Button color="inherit" component={Link} to="/booking-manager">Manage Bookings</Button>
             <Button color="inherit" onClick={logout}>Logout</Button>
           </>
         ) : (

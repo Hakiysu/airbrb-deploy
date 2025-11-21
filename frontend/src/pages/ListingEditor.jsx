@@ -90,6 +90,7 @@ export default function ListingEditor() {
               <input
                 type="file"
                 hidden
+                name="thumbnail"
                 accept="image/*"
                 onChange={async e => {
                   const file = e.target.files[0];
@@ -136,6 +137,7 @@ export default function ListingEditor() {
                 type="file"
                 multiple
                 hidden
+                name="images"
                 accept="image/*"
                 onChange={async (e) => {
                   const files = Array.from(e.target.files);

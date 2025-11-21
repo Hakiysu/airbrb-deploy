@@ -3,14 +3,15 @@ import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import globals from "globals";
+import cypress from "eslint-plugin-cypress";
 
 export default [
   { ignores: ["dist", "src/__test__", "**/*config.js"] },
   {
-    files: ["**/*.{js,jsx,ts,tsx}"],
+    files: ["**/*.{js,jsx,ts,tsx,**/*.cy.{js,jsx,ts,tsx}"],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: { ...globals.browser, Cypress: "readonly", cy: "readonly" },
       parserOptions: {
         ecmaVersion: "latest",
         ecmaFeatures: { jsx: true },
@@ -19,6 +20,7 @@ export default [
     },
     settings: { react: { version: "detect" } },
     plugins: {
+      cypress,
       react,
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
@@ -29,7 +31,7 @@ export default [
       ...react.configs["jsx-runtime"].rules,
       ...reactHooks.configs.recommended.rules,
       "react-hooks/exhaustive-deps": "off",
-      "no-unused-vars": ["error", { 
+      "no-unused-vars": ["error", {
         "argsIgnorePattern": "^_",
         "caughtErrorsIgnorePattern": "^_"
       }],
@@ -41,13 +43,21 @@ export default [
       "react/no-unstable-nested-components": ["error", { allowAsProps: true }],
       "prefer-arrow-callback": [
         "error",
-        {
-          allowNamedFunctions: true,
-        },
+        { allowNamedFunctions: true },
       ],
       "react/jsx-one-expression-per-line": "off",
       indent: ["error", 2],
       "react/prop-types": "off",
+    },
+  },
+  {
+    files: ["cypress/**/*.js", "cypress/**/*.ts"],
+    languageOptions: {
+      globals: { ...globals.browser, cy: "readonly", Cypress: "readonly" },
+    },
+    plugins: { cypress },
+    rules: {
+      ...cypress.configs.recommended.rules,
     },
   },
 ];
